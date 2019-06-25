@@ -9,10 +9,10 @@
 
 (defn ddb-api
   ([] (ddb-api nil))
-  ([reset]
-   (or (and (not reset) @ddb-api-)
-       (doto (aws/client {:api :dynamodb})
-         (->> (reset! ddb-api-))))))
+  ([profile]
+   (or (and (nil? profile) @ddb-api-)
+       (reset! ddb-api- (aws/client {:api :dynamodb
+                                    :credentials-provider (u/credentials profile)})))))
 
 (defn- to-ddb
   [o]

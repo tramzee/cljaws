@@ -1,17 +1,16 @@
 (ns cljaws.s3
-  (:require
-   [cognitect.aws.client.api :as aws]
-   [cljaws.util :as u]
-   [clojure.string :as str]))
+  (:require [cljaws.util :as u]
+            [clojure.string :as str]
+            [cognitect.aws.client.api :as aws]))
 
 (defonce ^:private s3-api- (atom nil))
 
 (defn s3-api
   ([] (s3-api nil))
-  ([reset]
-   (or (and (not reset) @s3-api-)
-       (doto (aws/client {:api :s3})
-         (->> (reset! s3-api-))))))
+  ([profile]
+   (or (and (nil? profile) @s3-api-)
+       (reset! s3-api- (aws/client {:api :s3
+                                    :credentials-provider (u/credentials profile)})))))
 
 (defn- bucket-prefix
   [path]
